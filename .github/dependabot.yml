@@ -1,0 +1,27 @@
+# Dependabot — automated dependency vulnerability alerts
+# Free on all public and private GitHub repos (no cost)
+version: 2
+updates:
+  # Python dependencies (pyproject.toml / uv.lock)
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "security"
+    # Auto-approve patch-level updates (low risk)
+    # Minor/major updates still require manual review
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    labels:
+      - "dependencies"
+      - "ci"
