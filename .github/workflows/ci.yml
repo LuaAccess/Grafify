@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Limit CI permissions to read-only — prevents token abuse if a step is compromised
+permissions:
+  contents: read
+
+jobs:
+  skillgen-check:
+    # Fast lint-style guard: the skill files under graphify/ are generated from
+    # the fragments in tools/skillgen/. This fails if someone hand-edited a
+    # generated file or forgot to re-run the generator and bless expected/, and it
+    # runs the build-time validators that guard per-host coverage, the file_type
+    # enum, the monolith round-trips, and the always-on round-trips.
+    runs-on: ubuntu-latest
+    steps:
+      # SHA-pinned: actions/checkout v4.2.2 — avoids tag-mutable supply chain risk
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      # SHA-pinned: astral-sh/setup-uv v5.4.2
+      - name: Install uv
+        uses: astral-sh/setup-uv@6b9c6063abd6010835644d4b4b9a0e5f03bd1e5f
+        with:
+          python-version: "3.12"
+
+      - name: Check generated skill artifacts are up to date
+        run: uv run --frozen python -m tools.skillgen --check
+
+      - name: Audit per-host v8 coverage
+        run: uv run --frozen python -m tools.skillgen --audit-coverage
+
+      - name: Check the file_type enum is a singleton
+        run: uv run --frozen python -m tools.skillgen --schema-singleton
+
+      - name: Round-trip the monoliths against v8
+        run: uv run --frozen python -m tools.skillgen --monolith-roundtrip
+
+      - name: Round-trip the always-on blocks against v8
+        run: uv run --frozen python -m tools.skillgen --always-on-roundtrip
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      # SHA-pinned: actions/checkout v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      # SHA-pinned: astral-sh/setup-uv v5.4.2
+      - name: Install uv
+        uses: astral-sh/setup-uv@6b9c6063abd6010835644d4b4b9a0e5f03bd1e5f
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: uv sync --all-extras --frozen
+
+      - name: Run tests
+        run: uv run --frozen pytest tests/ -q --tb=short
+
+      - name: Verify install works end-to-end
+        run: |
+          uv run --frozen graphify --help
+          uv run --frozen graphify install
