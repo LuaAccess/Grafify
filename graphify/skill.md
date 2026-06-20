@@ -1,4 +1,4 @@
-[skill.md](https://github.com/user-attachments/files/29156183/skill.md)
+
 ---
 name: graphify
 description: "Codebase knowledge graph builder and query engine. Use ONLY when (a) the user explicitly invokes /graphify or graphify query, OR (b) graphify-out/graph.json already exists and the user asks an architecture or relationship question about the codebase. Do NOT trigger on general code questions without an existing graph. Builds from code, docs, PDFs, images, and video into a queryable graph with god nodes, community detection, and path/explain tools."
