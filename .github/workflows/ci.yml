@@ -13,12 +13,28 @@ permissions:
 
 jobs:
   skillgen-check:
-    # Fast lint-style guard: the skill files under graphify/ are generated from
-    # the fragments in tools/skillgen/. This fails if someone hand-edited a
-    # generated file or forgot to re-run the generator and bless expected/, and it
-    # runs the build-time validators that guard per-host coverage, the file_type
-    # enum, the monolith round-trips, and the always-on round-trips.
+    # Validates that graphify/skill*.md and graphify/always_on/*.md are in sync
+    # with the fragments in tools/skillgen/. Only runs when those source files
+    # actually change — not on every commit — because LuaAccess/Grafify is a
+    # hardened fork (not an active skillgen development repo) and unrelated commits
+    # (marketplace.json, pyproject.toml, .github/ changes) should not be blocked
+    # by a generator drift check they cannot affect.
     runs-on: ubuntu-latest
+    # ── PATH FILTER ──────────────────────────────────────────────────────────
+    # Only run when files that can cause skillgen drift are touched:
+    #   tools/skillgen/**        → fragment source or generator code changed
+    #   graphify/skill*.md       → generated skill file edited directly
+    #   graphify/always_on/**    → always-on instruction blocks changed
+    # All other commits (docs, CI config, pyproject, marketplace, etc.) skip
+    # this job entirely so they never fail on unrelated drift.
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      contains(toJSON(github.event.commits.*.modified), 'tools/skillgen') ||
+      contains(toJSON(github.event.commits.*.modified), 'graphify/skill') ||
+      contains(toJSON(github.event.commits.*.modified), 'graphify/always_on') ||
+      contains(toJSON(github.event.commits.*.added),    'tools/skillgen') ||
+      contains(toJSON(github.event.commits.*.added),    'graphify/skill') ||
+      contains(toJSON(github.event.commits.*.added),    'graphify/always_on')
     steps:
       # SHA-pinned: actions/checkout v4.2.2 — avoids tag-mutable supply chain risk
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
