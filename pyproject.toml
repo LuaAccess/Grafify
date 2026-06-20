@@ -43,9 +43,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/LuaAccess/graphify"
-Repository = "https://github.com/LuaAccess/graphify"
-Issues = "https://github.com/LuaAccess/graphify/issues"
+Homepage = "https://github.com/LuaAccess/Grafify"
+Repository = "https://github.com/LuaAccess/Grafify"
+Issues = "https://github.com/LuaAccess/Grafify/issues"
 
 [project.optional-dependencies]
 mcp = ["mcp"]
