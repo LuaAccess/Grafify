@@ -1,0 +1,14 @@
+{
+  "metadata": {
+    "pluginRoot": "./"
+  },
+  "plugins": [
+    {
+      "name": "graphify",
+      "source": "./",
+      "skills": [
+        "./graphify/skill.md"
+      ]
+    }
+  ]
+}
