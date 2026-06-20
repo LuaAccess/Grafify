@@ -1,6 +1,8 @@
 {
   "name": "graphify",
-  "skills": [
-    "./graphify/skill.md"
-  ]
+  "description": "Codebase knowledge graph for Claude Code. Maps your entire project — code, docs, PDFs, images — into a queryable graph with god nodes, community detection, and architecture visualization. LuaAccess hardened fork of graphify.",
+  "author": {
+    "name": "LuaAccess",
+    "url": "https://github.com/LuaAccess"
+  }
 }
