@@ -1,14 +1,17 @@
 {
-  "metadata": {
-    "pluginRoot": "./"
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "Grafify",
+  "description": "Codebase knowledge graph for Claude Code...",
+  "owner": {
+    "name": "LuaAccess",
+    "url": "https://github.com/LuaAccess"
   },
   "plugins": [
     {
       "name": "graphify",
+      "description": "Turn any codebase into a queryable knowledge graph...",
       "source": "./",
-      "skills": [
-        "./graphify/skill.md"
-      ]
+      "category": "developer-tools"
     }
   ]
 }
